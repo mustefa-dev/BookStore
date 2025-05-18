@@ -15,6 +15,8 @@ public class DataContext : DbContext
 
 
     // here to add
+public DbSet<Cart> Carts { get; set; }
+public DbSet<CartProduct> CartProducts { get; set; }
 public DbSet<Category> Categorys { get; set; }
 public DbSet<Book> Books { get; set; }
 

@@ -1,20 +1,15 @@
-using BookStore.Helpers;
-using BookStore.Properties;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using BookStore.DATA.DTOs;
 using BookStore.DATA.DTOs.Category;
 using BookStore.Entities;
 using BookStore.Services;
 
 namespace BookStore.Controllers
 {
-    public class CategorysController : BaseController
+    public class CategoriesController : BaseController
     {
         private readonly ICategoryServices _categoryServices;
 
-        public CategorysController(ICategoryServices categoryServices)
+        public CategoriesController(ICategoryServices categoryServices)
         {
             _categoryServices = categoryServices;
         }

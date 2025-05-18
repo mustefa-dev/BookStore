@@ -12,10 +12,28 @@ public class RepositoryWrapper : IRepositoryWrapper
 
 
     // here to add
+private ICartRepository _Cart;
+
+public ICartRepository Cart {
+    get {
+        if(_Cart == null) {
+            _Cart = new CartRepository(_context, _mapper);
+        }
+        return _Cart;
+    }
+}
+private ICartProductRepository _CartProduct;
+
+public ICartProductRepository CartProduct {
+    get {
+        if(_CartProduct == null) {
+            _CartProduct = new CartProductRepository(_context, _mapper);
+        }
+        return _CartProduct;
+    }
+}
 
     
-
-
     private IUserRepository _user;
 
 
