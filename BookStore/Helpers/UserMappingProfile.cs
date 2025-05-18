@@ -4,6 +4,7 @@ using BookStore.DATA.DTOs.Book;
 using BookStore.DATA.DTOs.Cart;
 using BookStore.DATA.DTOs.CartProduct;
 using BookStore.DATA.DTOs.Category;
+using BookStore.DATA.DTOs.Order;
 using BookStore.DATA.DTOs.User;
 using BookStore.Entities;
 using OneSignalApi.Model;
@@ -29,6 +30,17 @@ public class UserMappingProfile : Profile
 
 
         // here to add
+        CreateMap<Order, OrderDto>();
+        CreateMap<OrderForm, Order>()
+            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+        CreateMap<OrderItemForm, OrderItem>(); 
+        CreateMap<OrderItemtForm, OrderItem>(); 
+        CreateMap<OrderUpdate, Order>()
+            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+        CreateMap<OrderItem, OrderItemDto>();
+        CreateMap<OrderItemForm, OrderItem>();
+        CreateMap<OrderItemUpdate, OrderItem>()
+            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         CreateMap<Cart, CartDto>();
         CreateMap<CartProduct, CartProductDto>();
         CreateMap<CartForm, Cart>();
