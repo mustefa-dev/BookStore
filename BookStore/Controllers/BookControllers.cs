@@ -25,15 +25,15 @@ namespace BookStore.Controllers
 
         
         [HttpPost]
-        public async Task<ActionResult<Book>> Create([FromBody] BookForm bookForm) => Ok(await _bookServices.Create(bookForm));
+        public async Task<ActionResult<Book>> Create([FromBody] BookForm bookForm) => Ok(await _bookServices.Create(bookForm,Id));
 
         
         [HttpPut("{id}")]
-        public async Task<ActionResult<Book>> Update([FromBody] BookUpdate bookUpdate, Guid id) => Ok(await _bookServices.Update(id , bookUpdate));
+        public async Task<ActionResult<Book>> Update([FromBody] BookUpdate bookUpdate, Guid id) => Ok(await _bookServices.Update(id , bookUpdate,Id));
 
         
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Book>> Delete(Guid id) =>  Ok( await _bookServices.Delete(id));
+        public async Task<ActionResult<Book>> Delete(Guid id) =>  Ok( await _bookServices.Delete(id,Id));
         
     }
 }

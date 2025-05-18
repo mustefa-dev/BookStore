@@ -13,7 +13,7 @@ public static class IdentityServiceExtension
     {
         services.AddSwaggerGen(option =>
         {
-            option.SwaggerDoc("v1", new OpenApiInfo { Title = "VoteApI", Version = "v1" });
+            option.SwaggerDoc("v1", new OpenApiInfo { Title = "BookStore", Version = "v1" });
 
             AddAuthorizationHeader(option);
         });

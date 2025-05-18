@@ -1,5 +1,4 @@
 using AutoMapper;
-
 using BookStore.DATA.DTOs.Book;
 using BookStore.Entities;
 using BookStore.Interface;
@@ -8,71 +7,88 @@ namespace BookStore.Services;
 
 public interface IBookServices
 {
-    Task<(Book? book, string? error)> Create(BookForm bookForm);
+    Task<(BookDto? book, string? error)> Create(BookForm bookForm, Guid userId);
     Task<(List<BookDto> books, int? totalCount, string? error)> GetAll(BookFilter filter);
-    
+
     Task<(Book? book, string? error)> GetById(Guid id);
-    Task<(BookDto? book, string? error)> Update(Guid id, BookUpdate bookUpdate);
-    Task<(Book? book, string? error)> Delete(Guid id);
+    Task<(BookDto? book, string? error)> Update(Guid id, BookUpdate bookUpdate, Guid userId);
+    Task<(Book? book, string? error)> Delete(Guid id, Guid userId);
 }
 
 public class BookServices : IBookServices
 {
     private readonly IMapper _mapper;
-    private readonly IRepositoryWrapper _repositoryWrapper;
+    private readonly IRepositoryWrapper _repository;
 
     public BookServices(
         IMapper mapper,
-        IRepositoryWrapper repositoryWrapper
+        IRepositoryWrapper repository
     )
     {
         _mapper = mapper;
-        _repositoryWrapper = repositoryWrapper;
+        _repository = repository;
     }
 
 
-    public async Task<(Book? book, string? error)> Create(BookForm bookForm)
+    public async Task<(BookDto? book, string? error)> Create(BookForm bookForm, Guid userId)
     {
-        var book = _mapper.Map<Book>(bookForm);
-        var response = await _repositoryWrapper.Book.Add(book);
-        return response == null ? (null, "Error") : (_mapper.Map<Book>(response), null);
-        
-        
+        var user = await _repository.User.Get(x => x.Id == userId);
+        if (user == null) return (null, "User not found");
+        {
+            var category = await _repository.Category.GetById(bookForm.CategoryId);
+            if (category == null) return (null, "Category not found");
+            var book = _mapper.Map<Book>(bookForm);
+            var response = await _repository.Book.Add(book);
+            return response == null ? (null, "Error") : (_mapper.Map<BookDto>(response), null);
+        }
     }
 
     public async Task<(List<BookDto> books, int? totalCount, string? error)> GetAll(BookFilter filter)
     {
-        var (books, totalCount) = await _repositoryWrapper.Book.GetAll<BookDto>(
+        var (books, totalCount) = await _repository.Book.GetAll<BookDto>(
             x =>
-                (filter.Name == null || x.Name!.Contains(filter.Name))
-                
-            , filter.PageNumber, filter.PageSize);
-        
+                (filter.Name == null || x.Name!.Contains(filter.Name)) &&
+                (filter.Author == null || x.Author!.Contains(filter.Author)) &&
+                (filter.Genre == null || x.Genre!.Contains(filter.Genre)) &&
+                (filter.MinPrice == null || x.Price >= filter.MinPrice) &&
+                (filter.MaxPrice == null || x.Price <= filter.MaxPrice) &&
+                (filter.PublishedDateFrom == null || x.PublishedDate >= filter.PublishedDateFrom) &&
+                (filter.PublishedDateTo == null || x.PublishedDate <= filter.PublishedDateTo) &&
+                (filter.CategoryId == null || x.CategoryId == filter.CategoryId),
+            filter.PageNumber,
+            filter.PageSize);
+
         return (books, totalCount, null);
     }
 
+
     public async Task<(Book? book, string? error)> GetById(Guid id)
     {
-        var book = await _repositoryWrapper.Book.Get(u => u.Id == id && u.Deleted != true);
+        var book = await _repository.Book.Get(u => u.Id == id && u.Deleted != true);
         if (book is null) return (null, "Book not found");
         var mappedBook = _mapper.Map<Book>(book);
         return (mappedBook, null);
     }
 
-    public async Task<(BookDto? book, string? error)> Update(Guid id, BookUpdate bookUpdate)
+    public async Task<(BookDto? book, string? error)> Update(Guid id, BookUpdate bookUpdate, Guid userId)
     {
-        var book = await _repositoryWrapper.Book.GetById(id);
-        var response = await _repositoryWrapper.Book.Update(book);
-        var BookDto = _mapper.Map<BookDto>(response);
-        return response == null ? (null, "book  cannot be updated") : (BookDto, null);
-
+        var user = await _repository.User.Get(x => x.Id == userId);
+        if (user == null) return (null, "User not found");
+        var book = await _repository.Book.GetById(id);
+        if (book == null) return (null, "Book not found");
+        _mapper.Map(bookUpdate, book);
+        var response = await _repository.Book.Update(book);
+        var bookDto = _mapper.Map<BookDto>(response);
+        return response == null ? (null, "Book cannot be updated") : (bookDto, null);
     }
 
-    public async Task<(Book? book, string? error)> Delete(Guid id)
+    public async Task<(Book? book, string? error)> Delete(Guid id, Guid userId)
     {
-        var book = await _repositoryWrapper.Book.GetById(id);
-        if (book == null) return  (null, "Book not found");
-        var response = await _repositoryWrapper.Book.SoftDelete(id);
+        var user = await _repository.User.Get(x => x.Id == userId);
+        if (user == null) return (null, "User not found");
+        var book = await _repository.Book.GetById(id);
+        if (book == null) return (null, "Book not found");
+        var response = await _repository.Book.SoftDelete(id);
         return response == null ? (null, "Error") : (response, null);
     }
 }
