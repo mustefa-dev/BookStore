@@ -4,10 +4,10 @@ namespace BookStore.DATA.DTOs.Cart
 {
     public class CartForm 
     {
-        public List<OrderProductFormDto> Items { get; set; } = new();
+        public List<OrderItemtForm> Items { get; set; } = new();
     }
 
-    public class OrderProductFormDto
+    public class OrderItemtForm
     {
         [Required]
         public Guid BookId { get; set; }
