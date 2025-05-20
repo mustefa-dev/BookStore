@@ -10,5 +10,6 @@ namespace BookStore.DATA.DTOs.Book
         public int Price { get; set; }
         public string? Genre { get; set; }
         public Guid CategoryId { get; set; }
+        public int ? Stock { get; set; }
     }
 }

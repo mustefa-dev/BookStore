@@ -76,6 +76,12 @@ public class BookServices : IBookServices
         if (user == null) return (null, "User not found");
         var book = await _repository.Book.GetById(id);
         if (book == null) return (null, "Book not found");
+        if (!bookUpdate.CategoryId.HasValue) { bookUpdate.CategoryId = book.CategoryId; }
+        else
+        {
+            var category = await _repository.Category.GetById(bookUpdate.CategoryId.Value);
+            if (category == null) return (null, $"Category with ID {bookUpdate.CategoryId.Value} does not exist");
+        }
         _mapper.Map(bookUpdate, book);
         var response = await _repository.Book.Update(book);
         var bookDto = _mapper.Map<BookDto>(response);
