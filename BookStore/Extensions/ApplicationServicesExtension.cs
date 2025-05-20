@@ -19,19 +19,20 @@ public static class ApplicationServicesExtension
         services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
         services.AddScoped<IUserService, UserService>();
         // here to add
-services.AddScoped<IOrderService, OrderService>();
-services.AddScoped<IOrderItemServices, OrderItemServices>();
-services.AddScoped<ICartServices, CartServices>();
-services.AddScoped<ICartProductServices, CartProductServices>();
-services.AddScoped<ICategoryServices, CategoryServices>();
-services.AddScoped<IBookServices, BookServices>();
+        services.AddScoped<IOrderService, OrderService>();
+        services.AddScoped<IOrderItemServices, OrderItemServices>();
+        services.AddScoped<ICartServices, CartServices>();
+        services.AddScoped<ICartProductServices, CartProductServices>();
+        services.AddScoped<ICategoryServices, CategoryServices>();
+        services.AddScoped<IBookServices, BookServices>();
 
         services.AddScoped<IFileService, FileService>();
         services.AddHttpClient();
         
-
-
-
+        services.AddScoped<ICityServices, CityServices>();
+        services.AddScoped<IAddressServices, AddressServices>();
+        services.AddScoped<IDistrictServices, DistrictServices>();
+        services.AddScoped<IGovernorateServices, GovernorateServices>();
 
 
         return services;

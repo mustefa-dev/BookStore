@@ -15,6 +15,9 @@ namespace BookStore.Entities
         public DateTime? DateOfCanceled { get; set; }
         public DateTime? DateOfDelivered { get; set; }
         
+        public Guid? AddressId { get; set; }
+        
+        public Address? Address { get; set; }
         public ICollection<OrderItem>? OrderProducts { get; set; }
     }
 }

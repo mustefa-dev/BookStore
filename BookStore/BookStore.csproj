@@ -39,7 +39,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="DATA\DTOs\" />
       <Folder Include="wwwroot\Attachments\" />
       <Folder Include="wwwroot\images\" />
     </ItemGroup>

@@ -40,15 +40,16 @@ namespace BookStore.Services
 
         public async Task<(OrderDto? orderDto, string? error)> Add(OrderForm orderForm, Guid userId)
         {
-            // Create and save the order first
-            var newOrder = _mapper.Map<Order>(orderForm);
-            newOrder.UserId = userId;
-            newOrder.OrderStatus = OrderStatus.Pending;
+            var user = await _repositoryWrapper.User.Get(x => x.Id == userId);
+            if (user == null) return (null, "User not found");
+            var order = _mapper.Map<Order>(orderForm);
+            order.UserId = userId;
+            order.OrderStatus = OrderStatus.Pending;
+            order.AddressId = user.AddressId;
     
-            var createdOrder = await _repositoryWrapper.Order.Add(newOrder);
+            var createdOrder = await _repositoryWrapper.Order.Add(order);
 
-            if (createdOrder == null) 
-                return (null, "Unable to create order");
+            if (createdOrder == null) return (null, "Unable to create order");
     
             foreach (var item in orderForm.OrderItems)
             {
@@ -61,7 +62,7 @@ namespace BookStore.Services
             }
             
         
-            var orderDto = _mapper.Map<OrderDto>(newOrder);
+            var orderDto = _mapper.Map<OrderDto>(order);
 
             return (orderDto, null);
         }

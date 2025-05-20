@@ -6,6 +6,13 @@ namespace BookStore.Entities
         public string? FullName { get; set; }
         public string? Password { get; set; }
         public UserRole? Role { get; set; }
+        public Guid? AddressId { get; set; }
+
+        public ICollection<Address>? Addresses { get; set; }
+        
+        public ICollection<Order>? Orders { get; set; }
+
+
     }
     public enum UserRole
     {

@@ -10,6 +10,8 @@ namespace BookStore.DATA.DTOs.Order
         public DateTime OrderDate { get; set; } = DateTime.Now;
         public List <OrderItemtForm> OrderItems { get; set; } = new List<OrderItemtForm>();
         
+        
+        
 
     }
 }
