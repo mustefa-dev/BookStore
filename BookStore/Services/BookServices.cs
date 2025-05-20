@@ -10,7 +10,7 @@ public interface IBookServices
     Task<(BookDto? book, string? error)> Create(BookForm bookForm, Guid userId);
     Task<(List<BookDto> books, int? totalCount, string? error)> GetAll(BookFilter filter);
 
-    Task<(Book? book, string? error)> GetById(Guid id);
+    Task<(BookDto? book, string? error)> GetById(Guid id);
     Task<(BookDto? book, string? error)> Update(Guid id, BookUpdate bookUpdate, Guid userId);
     Task<(Book? book, string? error)> Delete(Guid id, Guid userId);
 }
@@ -62,11 +62,11 @@ public class BookServices : IBookServices
     }
 
 
-    public async Task<(Book? book, string? error)> GetById(Guid id)
+    public async Task<(BookDto? book, string? error)> GetById(Guid id)
     {
-        var book = await _repository.Book.Get(u => u.Id == id && u.Deleted != true);
-        if (book is null) return (null, "Book not found");
-        var mappedBook = _mapper.Map<Book>(book);
+        var book = await _repository.Book.Get<BookDto>(u => u.Id == id && u.Deleted != true);
+        if (book == null) return (null, "Book not found");
+        var mappedBook = _mapper.Map<BookDto>(book);
         return (mappedBook, null);
     }
 

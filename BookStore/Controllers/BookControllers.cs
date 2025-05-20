@@ -26,6 +26,9 @@ namespace BookStore.Controllers
         
         [HttpPost]
         public async Task<ActionResult<Book>> Create([FromBody] BookForm bookForm) => Ok(await _bookServices.Create(bookForm,Id));
+        
+        [HttpGet("{id}") ]
+        public async Task<ActionResult<Book>> GetById(Guid id) => Ok(await _bookServices.GetById(id));
 
         
         [HttpPut("{id}")]

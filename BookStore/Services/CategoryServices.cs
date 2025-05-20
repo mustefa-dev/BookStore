@@ -9,6 +9,7 @@ public interface ICategoryServices
 {
     Task<(CategoryDto? category, string? error)> Create(CategoryForm categoryForm);
     Task<(List<CategoryDto> categorys, int? totalCount, string? error)> GetAll(CategoryFilter filter);
+    Task<(CategoryDto? category, string? error)> GetById(Guid id);
     Task<(CategoryDto? category, string? error)> Update(Guid id, CategoryUpdate categoryUpdate);
     Task<(Category? category, string? error)> Delete(Guid id);
 }
@@ -45,6 +46,14 @@ public class CategoryServices : ICategoryServices
             , filter.PageNumber, filter.PageSize);
         
         return (categorys, totalCount, null);
+        
+    }
+
+    public async Task<(CategoryDto? category, string? error)> GetById(Guid id)
+    {
+        var book =await _repositoryWrapper.Category.Get<CategoryDto>(x => x.Id == id);
+        if (book == null) return (null, "Category not found");
+        return (book, null);
         
     }
 

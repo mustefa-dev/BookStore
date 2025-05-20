@@ -21,8 +21,8 @@ namespace BookStore.Controllers
         
         [HttpPost]
         public async Task<ActionResult<Category>> Create([FromBody] CategoryForm categoryForm) => Ok(await _categoryServices.Create(categoryForm));
-
-        
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Category>> GetById(Guid id) => Ok(await _categoryServices.GetById(id));
         [HttpPut("{id}")]
         public async Task<ActionResult<Category>> Update([FromBody] CategoryUpdate categoryUpdate, Guid id) => Ok(await _categoryServices.Update(id , categoryUpdate));
 
