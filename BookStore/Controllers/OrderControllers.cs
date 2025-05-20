@@ -33,5 +33,8 @@ namespace BookStore.Controllers
         [HttpPut("{id}/Cancel")]
         public async Task<ActionResult> Cancel(Guid id) => Ok(await _orderService.Cancel(id, Id));
        
+        [HttpPost("FromCart")]
+        public async Task<ActionResult> CreateOrderFromCart([FromBody] string? note) => Ok(await _orderService.CreateOrderFromCart(Id, note));
+
     }
 }

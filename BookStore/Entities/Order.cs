@@ -18,6 +18,7 @@ namespace BookStore.Entities
         public Guid? AddressId { get; set; }
         
         public Address? Address { get; set; }
+        public decimal TotalPrice { get; set; } 
         public ICollection<OrderItem>? OrderProducts { get; set; }
     }
 }

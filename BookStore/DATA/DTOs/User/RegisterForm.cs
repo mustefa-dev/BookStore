@@ -16,6 +16,8 @@ namespace BookStore.DATA.DTOs.User
         [MinLength(2, ErrorMessage = "FullName must be at least 2 characters")]
         public string? FullName { get; set; }
         public string? Role { get; set; }
+        [Required]
+        public Guid AddressId { get; set; }
         
         
     }

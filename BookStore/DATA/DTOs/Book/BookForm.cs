@@ -10,5 +10,7 @@ namespace BookStore.DATA.DTOs.Book
         public decimal Price { get; set; }
         public string Genre { get; set; } = string.Empty;
         public Guid CategoryId { get; set; }
+        public int Stock { get; set; }
+
     }
 }

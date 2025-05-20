@@ -59,7 +59,18 @@ public class UserMappingProfile : Profile
             .ForMember(dest => dest.ClientFullName, opt => opt.MapFrom(src => src.User.FullName))
             .ForMember(dest => dest.ClientEmail, opt => opt.MapFrom(src => src.User.Email))
             .ForMember(dest => dest.ClientRole, opt => opt.MapFrom(src => src.User.Role))
-            .ForMember(dest => dest.ClientId, opt => opt.MapFrom(src => src.User.Id));
+            .ForMember(dest => dest.ClientId, opt => opt.MapFrom(src => src.User.Id))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Address.Name))
+            .ForMember(dest => dest.FullAddress, opt => opt.MapFrom(src => src.Address.FullAddress))
+            .ForMember(dest => dest.Latidute, opt => opt.MapFrom(src => src.Address.Latidute))
+            .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Address.Longitude))
+            .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.Address.IsMain))
+            .ForMember(dest => dest.CityId, opt => opt.MapFrom(src => src.Address.CityId))
+            .ForMember(dest => dest.GovernorateId, opt => opt.MapFrom(src => src.Address.City.District.Governorate.Id))
+            .ForMember(dest => dest.DistrictId, opt => opt.MapFrom(src => src.Address.City.District.Id))
+            .ForMember(dest => dest.GovernorateName, opt => opt.MapFrom(src => src.Address.City.District.Governorate.Name))
+            .ForMember(dest => dest.DistrictName, opt => opt.MapFrom(src => src.Address.City.District.Name))
+            .ForMember(dest => dest.CityName, opt => opt.MapFrom(src => src.Address.City.Name));
         CreateMap<OrderForm, Order>()
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
