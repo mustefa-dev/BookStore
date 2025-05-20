@@ -10,6 +10,7 @@ public interface IAddressServices
 {
     Task<(AddressDto? address, string? error)> Create(AddressForm addressForm,Guid userId);
     Task<(List<AddressDto> addresss, int? totalCount, string? error)> GetAll(AddressFilter filter,Guid userId);
+    Task<(AddressDto? address, string? error)> GetById(Guid id);
     Task<(AddressDto? address, string? error)> Update(Guid id, AddressUpdate addressUpdate,Guid userId);
     Task<(Address? address, string? error)> Delete(Guid id,Guid userId);
 }
@@ -48,12 +49,21 @@ public class AddressServices : IAddressServices
         if (user ==null) return (null,null, "User does not exist");
         var (car,totalCount) =  await _repositoryWrapper.Address.GetAll<AddressDto>(
             x =>
+                x.AppUserId == userId && 
                 (filter.Name == null || x.Name.Contains(filter.Name)),
             filter.PageNumber, filter.PageSize
         );
         var responseDto = _mapper.Map<List<AddressDto>>(car);
         return (responseDto, totalCount, null);
-    }   
+    }
+
+    public async Task<(AddressDto? address, string? error)> GetById(Guid id)
+    {
+        var address = await _repositoryWrapper.Address.Get(x => x.Id == id);
+        if (address == null) return (null, "address not found");
+        var response = _mapper.Map<AddressDto>(address);
+        return (response, null);
+    }
 
     public async Task<(AddressDto? address, string? error)> Update(Guid id, AddressUpdate addressUpdate ,Guid userId)
     {

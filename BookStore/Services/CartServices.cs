@@ -36,7 +36,7 @@ namespace BookStore.Services
             if (cart == null)
                 return (null, "Cart not found");
 
-            cart.TotalAmount = (decimal)cart.Items.Sum(item => item.Book.Price * item.Quantity);
+            cart.TotalAmount = cart.Items.Sum(item => item.Book.Price * item.Quantity);
             var cartDto = _mapper.Map<CartDto>(cart);
             return (cartDto, null);
         }

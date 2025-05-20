@@ -23,6 +23,8 @@ namespace BookStore.Controllers
         [HttpPost]
         public async Task<ActionResult<Address>> Create([FromBody] AddressForm addressForm) => Ok(await _addressServices.Create(addressForm, Id));
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Address>> GetById(Guid id) => Ok(await _addressServices.GetById(id));
         [HttpPut("{id}")]
         public async Task<ActionResult<Address>> Update([FromBody] AddressUpdate addressUpdate, Guid id) => Ok(await _addressServices.Update(id, addressUpdate, Id));
 
