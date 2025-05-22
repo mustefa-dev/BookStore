@@ -12,6 +12,7 @@ public interface IGovernorateServices
     Task<(List<GovernorateDto> governorates, int? totalCount, string? error)> GetAll(GovernorateFilter filter);
     Task<(GovernorateDto? governorate, string? error)> Update(Guid id, GovernorateUpdate governorateUpdate);
     Task<(GovernorateDto? governorate, string? error)> Delete(Guid id);
+    Task<(GovernorateDto? governorate, string? error)> GetById(Guid id);
 }
 
 public class GovernorateServices : IGovernorateServices
@@ -66,5 +67,13 @@ public class GovernorateServices : IGovernorateServices
         var responseDto = _mapper.Map<GovernorateDto>(governorate);
         return response == null ? (null, "governorate couldn't be deleted") : (responseDto, null);
 
+    }
+
+    public async Task<(GovernorateDto? governorate, string? error)> GetById(Guid id)
+    {
+        var governorate =await _repositoryWrapper.Governorate.Get(x => x.Id == id);
+        if (governorate == null) return (null, "governorate not found");
+        var responseDto = _mapper.Map<GovernorateDto>(governorate);
+        return (responseDto, null);
     }
 }

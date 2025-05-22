@@ -32,6 +32,8 @@ public class AddressServices : IAddressServices
 
     public async Task<(AddressDto? address, string? error)> Create(AddressForm addressForm, Guid userId)
     {
+        var governorate = await _repositoryWrapper.Governorate.GetById(addressForm.GovernorateId);
+        if (governorate == null) return (null, "Governorate not found");
         var user = await _repositoryWrapper.User.GetById(userId);
         if (user == null) return (null, "User does not exist");
         var address = _mapper.Map<Address>(addressForm);
@@ -47,13 +49,13 @@ public class AddressServices : IAddressServices
     {
         var user =await _repositoryWrapper.User.GetById(userId);
         if (user ==null) return (null,null, "User does not exist");
-        var (car,totalCount) =  await _repositoryWrapper.Address.GetAll<AddressDto>(
+        var (Address,totalCount) =  await _repositoryWrapper.Address.GetAll<AddressDto>(
             x =>
-                x.AppUserId == userId && 
+                x.AppUserId == userId || x.AppUser.Role == UserRole.Admin && 
                 (filter.Name == null || x.Name.Contains(filter.Name)),
             filter.PageNumber, filter.PageSize
         );
-        var responseDto = _mapper.Map<List<AddressDto>>(car);
+        var responseDto = _mapper.Map<List<AddressDto>>(Address);
         return (responseDto, totalCount, null);
     }
 

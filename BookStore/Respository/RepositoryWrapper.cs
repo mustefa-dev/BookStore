@@ -13,20 +13,7 @@ public class RepositoryWrapper : IRepositoryWrapper
 
     // here to add
 
-    private ICityRepository _City;
-
-    public ICityRepository City
-    {
-        get
-        {
-            if (_City == null)
-            {
-                _City = new CityRepository(_context, _mapper);
-            }
-
-            return _City;
-        }
-    }
+    
 
     private IAddressRepository _Address;
 
@@ -43,20 +30,7 @@ public class RepositoryWrapper : IRepositoryWrapper
         }
     }
 
-    private IDistrictRepository _District;
-
-    public IDistrictRepository District
-    {
-        get
-        {
-            if (_District == null)
-            {
-                _District = new DistrictRepository(_context, _mapper);
-            }
-
-            return _District;
-        }
-    }
+   
 
     private IGovernorateRepository _Governorate;
 
