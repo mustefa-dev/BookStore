@@ -15,6 +15,9 @@ public class UserMappingProfile : Profile
 {
     public UserMappingProfile()
     {
+        var baseUrl = "http://localhost:5152/api/";
+
+
         CreateMap<AppUser, UserDto>();
         CreateMap<UpdateUserForm, AppUser>();
         CreateMap<AppUser, TokenDTO>();
@@ -25,12 +28,12 @@ public class UserMappingProfile : Profile
 
         CreateMap<Address, AddressDto>().ForMember(dist => dist.GovernorateName
             , opt => opt.MapFrom(src => src.Governorate));
-            
+
 
         CreateMap<AddressForm, Address>();
         CreateMap<AddressUpdate, Address>().ForAllMembers(opts =>
             opts.Condition((src, dest, srcMember) => srcMember != null));
-       
+
         CreateMap<Governorate, GovernorateDto>();
         CreateMap<GovernorateForm, Governorate>();
         CreateMap<GovernorateUpdate, Governorate>()
@@ -60,15 +63,15 @@ public class UserMappingProfile : Profile
             .ForMember(dest => dest.BookName, opt => opt.MapFrom(src => src.Book.Name))
             .ForMember(dest => dest.BookAuthor, opt => opt.MapFrom(src => src.Book.Author))
             .ForMember(dest => dest.BookDescription, opt => opt.MapFrom(src => src.Book.Description))
-            .ForMember(dest => dest.BookImageUrl, opt => opt.MapFrom(src => src.Book.ImageUrl))
+            .ForMember(dest => dest.BookImageUrl,
+                opt => opt.MapFrom(src =>
+                    !string.IsNullOrEmpty(src.Book.ImageUrl) && !src.Book.ImageUrl.StartsWith("http")
+                        ? baseUrl + src.Book.ImageUrl
+                        : src.Book.ImageUrl))
             .ForMember(dest => dest.BookPublishedDate, opt => opt.MapFrom(src => src.Book.PublishedDate))
             .ForMember(dest => dest.BookPrice, opt => opt.MapFrom(src => src.Book.Price))
             .ForMember(dest => dest.BookGenre, opt => opt.MapFrom(src => src.Book.Genre))
             .ForMember(dest => dest.BookCategoryId, opt => opt.MapFrom(src => src.Book.CategoryId));
-        CreateMap<OrderItemForm, OrderItem>();
-        CreateMap<OrderItemUpdate, OrderItem>()
-            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
-
 
         CreateMap<Cart, CartDto>();
         CreateMap<CartForm, Cart>();
@@ -76,7 +79,6 @@ public class UserMappingProfile : Profile
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
 
-     
         CreateMap<CartProduct, CartProductDto>();
         CreateMap<CartProductForm, CartProduct>();
         CreateMap<CartProductUpdate, CartProduct>()
@@ -88,8 +90,8 @@ public class UserMappingProfile : Profile
         CreateMap<CategoryUpdate, Category>()
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
-
-        CreateMap<Book, BookDto>();
+        CreateMap<Book, BookDto>()
+            .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.ImageUrl) && !src.ImageUrl.StartsWith("http") ? baseUrl + src.ImageUrl : src.ImageUrl));
         CreateMap<BookForm, Book>();
         CreateMap<BookUpdate, Book>()
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
