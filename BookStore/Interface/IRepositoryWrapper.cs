@@ -6,9 +6,7 @@ public interface IRepositoryWrapper
 
     // here to add
 
-    ICityRepository City { get; }
     IAddressRepository Address { get; }
-    IDistrictRepository District { get; }
     IGovernorateRepository Governorate { get; }
     IOrderRepository Order { get; }
     IOrderItemRepository OrderItem { get; }

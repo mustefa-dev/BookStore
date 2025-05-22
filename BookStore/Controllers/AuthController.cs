@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Controllers;
-//[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin")]
 
 public class UsersController : BaseController{
     private readonly IUserService _userService;
@@ -40,7 +40,7 @@ public class UsersController : BaseController{
     [HttpGet("/api/Users")]
     public async Task<ActionResult<Respons<UserDto>>> GetAll([FromQuery] UserFilter filter) =>
         Ok(await _userService.GetAll(filter), filter.PageNumber, filter.PageSize);
- 
+    [AllowAnonymous]
     [HttpGet("/api/MyProfile")]
     public async Task<ActionResult> GetMyProfile() => OkObject(await _userService.GetMyProfile(Id));
 }

@@ -64,7 +64,6 @@ namespace BookStore.Services
                 Role = (UserRole)(Enum)Enum.Parse(typeof(UserRole), registerForm.Role),
                 FullName = registerForm.FullName,
                 Password = BCrypt.Net.BCrypt.HashPassword(registerForm.Password),
-                AddressId = registerForm.AddressId
             };
 
             await _repositoryWrapper.User.CreateUser(newUser);

@@ -12,9 +12,7 @@ namespace BookStore.DATA.DTOs
         public bool? IsMain { get; set; }
         public Guid GovernorateId { get; set; }
         public string? GovernorateName { get; set; }
-        public Guid DistrictId { get; set; }
-        public string DistrictName { get; set; }
-        public Guid CityId { get; set; }
-        public string? CityName { get; set; }
+        public string? District { get; set; }
+        public string? City { get; set; }
     }
 }

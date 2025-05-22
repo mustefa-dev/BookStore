@@ -29,9 +29,7 @@ public static class ApplicationServicesExtension
         services.AddScoped<IFileService, FileService>();
         services.AddHttpClient();
         
-        services.AddScoped<ICityServices, CityServices>();
         services.AddScoped<IAddressServices, AddressServices>();
-        services.AddScoped<IDistrictServices, DistrictServices>();
         services.AddScoped<IGovernorateServices, GovernorateServices>();
 
 

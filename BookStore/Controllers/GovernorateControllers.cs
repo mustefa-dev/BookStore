@@ -3,8 +3,11 @@ using BookStore.Entities;
 using BookStore.Services;
 using Microsoft.AspNetCore.Mvc;
 using BookStore.Controllers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookStore.Controllers;
+
+[Authorize(Roles = "Admin")]
 
 public class GovernoratesController : BaseController
 {
@@ -16,6 +19,7 @@ public class GovernoratesController : BaseController
     }
 
 
+    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<List<GovernorateDto>>> GetAll([FromQuery] GovernorateFilter filter)
     {
@@ -28,6 +32,10 @@ public class GovernoratesController : BaseController
     {
         return Ok(await _governorateServices.Create(governorateForm));
     }
+    [AllowAnonymous]
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Governorate>> GetById(Guid id) { return Ok(await _governorateServices.GetById(id)); }
 
 
     [HttpPut("{id}")]

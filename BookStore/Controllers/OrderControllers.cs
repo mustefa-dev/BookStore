@@ -1,6 +1,7 @@
 
 using BookStore.DATA.DTOs;
 using BookStore.DATA.DTOs.Order;
+using BookStore.DATA.DTOs.Statistics;
 using BookStore.Services;
 using BookStore.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -35,6 +36,11 @@ namespace BookStore.Controllers
        
         [HttpPost("FromCart")]
         public async Task<ActionResult> CreateOrderFromCart([FromBody] string? note) => Ok(await _orderService.CreateOrderFromCart(Id, note));
-
+        
+        
+        [HttpGet("statistics")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> GetStatistics([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
+            => Ok(await _orderService.GetOrderStatistics(startDate, endDate));
     }
 }

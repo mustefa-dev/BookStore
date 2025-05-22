@@ -7,7 +7,7 @@ namespace BookStore.DATA.DTOs
         public string BookDescription { get; set; }
         public string BookImageUrl { get; set; }
         public DateTime? BookPublishedDate { get; set; }
-        public int BookPrice { get; set; }
+        public decimal? BookPrice { get; set; }
         public string BookGenre { get; set; }
         public Guid BookCategoryId { get; set; }
         public int Quantity { get; set; }
