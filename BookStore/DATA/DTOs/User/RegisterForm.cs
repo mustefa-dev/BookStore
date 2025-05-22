@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using BookStore.DATA.DTOs.User;
+using BookStore.Entities;
 
 namespace BookStore.DATA.DTOs.User
 {
@@ -15,8 +16,7 @@ namespace BookStore.DATA.DTOs.User
         [Required]
         [MinLength(2, ErrorMessage = "FullName must be at least 2 characters")]
         public string? FullName { get; set; }
-        public string? Role { get; set; }
-                
+        public UserRole? Role { get; set; }                
         
     }
 }

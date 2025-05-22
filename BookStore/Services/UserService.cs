@@ -61,7 +61,7 @@ namespace BookStore.Services
             var newUser = new AppUser
             {
                 Email = registerForm.Email,
-                Role = (UserRole)(Enum)Enum.Parse(typeof(UserRole), registerForm.Role),
+                Role = (UserRole)(Enum)Enum.Parse(typeof(UserRole), registerForm.Role.ToString()),
                 FullName = registerForm.FullName,
                 Password = BCrypt.Net.BCrypt.HashPassword(registerForm.Password),
             };
