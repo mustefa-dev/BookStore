@@ -51,7 +51,7 @@ public class AddressServices : IAddressServices
         if (user ==null) return (null,null, "User does not exist");
         var (Address,totalCount) =  await _repositoryWrapper.Address.GetAll<AddressDto>(
             x =>
-                x.AppUserId == userId || x.AppUser.Role == UserRole.Admin && 
+                x.AppUserId == userId  && 
                 (filter.Name == null || x.Name.Contains(filter.Name)),
             filter.PageNumber, filter.PageSize
         );

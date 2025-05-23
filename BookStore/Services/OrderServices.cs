@@ -16,9 +16,10 @@ namespace BookStore.Services
         Task<(string? successMessage, string? error)> Approve(Guid id, Guid userId);
         Task<(string? successMessage, string? error)> Delivered(Guid id, Guid userId);
         Task<(string? successMessage, string? error)> Cancel(Guid id, Guid userId);
-        Task<(OrderDto? orderDto, string? error)> CreateOrderFromCart(Guid userId, string? note);
+        Task<(OrderDto? orderDto, string? error)> CreateOrderFromCart(Guid userId, string? note, Guid? addressId);
 
-        Task<(OrderStatisticsDto? statistics, string? error)> GetOrderStatistics(DateTime? startDate, DateTime? endDate);
+        Task<(OrderStatisticsDto? statistics, string? error)>
+            GetOrderStatistics(DateTime? startDate, DateTime? endDate);
     }
 
     public class OrderService : IOrderService
@@ -38,10 +39,10 @@ namespace BookStore.Services
             var user = await _repositoryWrapper.User.Get(x => x.Id == userId);
             if (user == null) return (null, null, "User not found");
 
-            var (orders, totalCount) = user.Role == UserRole.Admin 
-                ? await _repositoryWrapper.Order.GetAll<OrderDto>() 
+            var (orders, totalCount) = user.Role == UserRole.Admin
+                ? await _repositoryWrapper.Order.GetAll<OrderDto>()
                 : await _repositoryWrapper.Order.GetAll<OrderDto>(x => x.UserId == userId);
-    
+
             var orderDtos = _mapper.Map<List<OrderDto>>(orders);
             return (orderDtos, totalCount, null);
         }
@@ -144,7 +145,7 @@ namespace BookStore.Services
             if (order == null) return (null, "Order not found");
 
             if (order.OrderStatus != OrderStatus.Accepted)
-                return (null, "Cannot deliver this order - it is not in pending status");
+                return (null, "Cannot deliver this order - it is not in Approve status");
             order.OrderStatus = OrderStatus.Delivered;
             order.DateOfDelivered = DateTime.UtcNow;
             var updatedOrder = await _repositoryWrapper.Order.Update(order);
@@ -176,30 +177,33 @@ namespace BookStore.Services
             return ("Order has been canceled successfully", null);
         }
 
-        public async Task<(OrderDto? orderDto, string? error)> CreateOrderFromCart(Guid userId, string? note)
+        public async Task<(OrderDto? orderDto, string? error)> CreateOrderFromCart(Guid userId, string? note,
+            Guid? addressId)
         {
             var user = await _repositoryWrapper.User.Get(x => x.Id == userId);
             if (user == null) return (null, "User not found");
-
+        
             if (user.Id != userId) return (null, "Only the user who created the order can create");
-
+        
             var cart = await _repositoryWrapper.Cart.Get(x => x.UserId == userId);
             if (cart == null) return (null, "Cart not found");
-
-            var address = await _repositoryWrapper.Address.Get(a => a.Id == user.AddressId);
-            if (address == null) return (null, "User address not found");
-
+        
+            var addressToUse = addressId;
+            if (addressToUse == null) return (null, "Address ID is required");
+            var address = await _repositoryWrapper.Address.Get(a => a.Id == addressToUse);
+            if (address == null) return (null, "Address not found");
+        
             var governorate = await _repositoryWrapper.Governorate.Get(g => g.Id == address.GovernorateId);
             if (governorate == null) return (null, "Governorate not found");
-
+        
             decimal deliveryPrice = 0;
             if (governorate.DeliveryPrice.HasValue) deliveryPrice = governorate.DeliveryPrice.Value;
-
+        
             var (orderData, totalCount) = await _repositoryWrapper.CartProduct.GetAll(x => x.CartId == cart.Id);
             if (orderData == null || orderData.Count == 0) return (null, "Cart is empty");
-
+        
             decimal totalPrice = 0;
-
+        
             foreach (var item in orderData)
             {
                 var book = await _repositoryWrapper.Book.Get(b => b.Id == item.BookId);
@@ -209,44 +213,52 @@ namespace BookStore.Services
                         $"Insufficient quantity for book. Available: {book.Stock}, Requested: {item.Quantity}");
                 totalPrice += book.Price * item.Quantity;
             }
-
+        
             totalPrice += deliveryPrice;
-
-            var order = _mapper.Map<Order>(orderData);
-
+        
+            var order = new Order
+            {
+                UserId = userId,
+                OrderStatus = OrderStatus.Pending,
+                AddressId = addressToUse,
+                TotalPrice = totalPrice,
+                Note = note,
+                OrderDate = DateTime.UtcNow
+            };
+        
             var createdOrder = await _repositoryWrapper.Order.Add(order);
             if (createdOrder == null) return (null, "Unable to create order");
-
+        
             foreach (var item in orderData)
             {
                 var book = await _repositoryWrapper.Book.Get(b => b.Id == item.BookId);
                 if (book.Stock < item.Quantity)
                     return (null,
                         $"Insufficient quantity for book. Available: {book.Stock}, Requested: {item.Quantity}");
-
+        
                 var orderItem = new OrderItem
                 {
                     OrderId = createdOrder.Id,
                     BookId = item.BookId,
                     Quantity = item.Quantity,
                 };
-
+        
                 var addedItem = await _repositoryWrapper.OrderItem.Add(orderItem);
                 if (addedItem == null) return (null, "Unable to create order item");
-
+        
                 book.Stock -= item.Quantity;
                 await _repositoryWrapper.Book.Update(book);
             }
-
+        
             var orderDto = _mapper.Map<OrderDto>(createdOrder);
-
+        
             foreach (var cartProduct in orderData)
             {
                 await _repositoryWrapper.CartProduct.Delete(cartProduct.Id);
             }
-
+        
             await _repositoryWrapper.Cart.Delete(cart.Id);
-
+        
             return (orderDto, null);
         }
 
@@ -283,7 +295,7 @@ namespace BookStore.Services
                 var address = await _repositoryWrapper.Address.Get<AddressDto>(a => a.Id == order.AddressId);
                 if (address != null && address.GovernorateName != null)
                 {
-                    var govName = address.GovernorateName?? "Unknown";
+                    var govName = address.GovernorateName ?? "Unknown";
                     if (ordersByGovernorate.ContainsKey(govName))
                         ordersByGovernorate[govName] += order.TotalPrice;
                     else

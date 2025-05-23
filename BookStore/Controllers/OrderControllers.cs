@@ -1,5 +1,6 @@
 
 using BookStore.DATA.DTOs;
+using BookStore.DATA.DTOs.Cart;
 using BookStore.DATA.DTOs.Order;
 using BookStore.DATA.DTOs.Statistics;
 using BookStore.Services;
@@ -35,12 +36,13 @@ namespace BookStore.Controllers
         public async Task<ActionResult> Cancel(Guid id) => Ok(await _orderService.Cancel(id, Id));
        
         [HttpPost("FromCart")]
-        public async Task<ActionResult> CreateOrderFromCart([FromBody] string? note) => Ok(await _orderService.CreateOrderFromCart(Id, note));
-        
+        public async Task<ActionResult> CreateOrderFromCart([FromBody] CartToOrderForm form) => 
+            Ok(await _orderService.CreateOrderFromCart(Id, form.Note, form.AddressId));     
         
         [HttpGet("statistics")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> GetStatistics([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
             => Ok(await _orderService.GetOrderStatistics(startDate, endDate));
     }
+    
 }
